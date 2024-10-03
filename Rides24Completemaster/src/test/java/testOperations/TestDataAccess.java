@@ -1,7 +1,9 @@
 package testOperations;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
@@ -80,6 +82,12 @@ public class TestDataAccess {
 			}
 			return driver;
     }
+	
+	/*public Ride createRide(String from, String to, Date date, int nPlaces, float price) {
+		
+		return ride;
+	}*/
+	
 	public boolean existDriver(String email) {
 		 return  db.find(Driver.class, email)!=null;
 		 
@@ -132,6 +140,26 @@ public class TestDataAccess {
 			} else 
 			return null;
 
+		}
+		
+
+
+		public void deactivateRide(String driverName, String from, String to, Date date) {
+		    System.out.println(">> TestDataAccess: deactivateRide");
+		    Driver driver = db.find(Driver.class, driverName);
+		    
+		    if (driver != null) {
+		        db.getTransaction().begin();
+		        for (Ride ride : driver.getCreatedRides()) {
+		            if (ride.getFrom().equals(from) && ride.getTo().equals(to) && ride.getDate().equals(date)) {
+		                ride.setActive(false);
+		                break;
+		            }
+		        }
+		        db.getTransaction().commit();
+		    } else {
+		        throw new IllegalArgumentException("Driver not found");
+		    }
 		}
 
 
