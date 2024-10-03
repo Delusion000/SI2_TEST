@@ -105,11 +105,6 @@ public class GetRidesByDriverBDBlackTest {
 	public void test3() {
 	    String driverUsername = "Driver1";
 
-	    
-	    Calendar cal = Calendar.getInstance();
-	    cal.set(2024, Calendar.MAY, 20);
-	    Date rideDate = cal.getTime();
-	    
 	    try {
 	        // 
 	        testDA.open();
@@ -133,6 +128,8 @@ public class GetRidesByDriverBDBlackTest {
 	        testDA.close();
 	    }
 	}
+	
+	@Test
 	public void test4() {
 	    String driverUsername = "Driver1";
 
@@ -150,7 +147,7 @@ public class GetRidesByDriverBDBlackTest {
 	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
 	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
 
-	        testDA.deactivateRide(driverUsername, "Cali", "Bogota", rideDate);
+	        testDA.deactivateRide(driverUsername, "Cali", "Bogota", rideDate);//desactiva el viaje
 	        testDA.close();
 	        // Llamar al método 
 	        
@@ -170,4 +167,143 @@ public class GetRidesByDriverBDBlackTest {
 	        testDA.close();
 	    }
 	}
+	
+	@Test
+	public void test5() {
+	    String driverUsername = "Driver1";
+
+	    
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(2024, Calendar.MAY, 20);
+	    Date rideDate = cal.getTime();
+	    
+	    try {
+	        // 
+	        testDA.open();
+	        testDA.createDriver(driverUsername, null);  
+	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        testDA.close();
+
+	        // Llamar al método 
+	        sut.open();
+	        List<Ride> result = sut.getRidesByDriver(null);
+	        sut.close();
+	        
+	        // Verificar es null por exepcion 
+	        assertNull(result);
+	       
+	       
+	    } finally {
+	        testDA.open();
+	        testDA.removeDriver(driverUsername); 
+	        testDA.close();
+	    }
+	}
+	
+	
+	@Test
+	public void test6() {
+	    String driverUsername = "Driver1";
+
+	    
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(2024, Calendar.MAY, 20);
+	    Date rideDate = cal.getTime();
+	    
+	    try {
+	        // 
+	        testDA.open();
+	        testDA.createDriver(driverUsername, null);  
+	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        testDA.close();
+	        
+	        // Llamar al método 
+	        sut.open();
+	        List<Ride> result = sut.getRidesByDriver("");
+	        sut.close();
+	        
+	        // Verificar es null por exepcion 
+	        assertNull(result);
+	       
+	       
+	    } finally {
+	        testDA.open();
+	        testDA.removeDriver(driverUsername); 
+	        testDA.close();
+	    }
+	}
+	
+	@Test
+	public void test7() {
+	    String driverUsername = "Driver1";
+	    String UsernameUser = "user1";
+	    
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(2024, Calendar.MAY, 20);
+	    Date rideDate = cal.getTime();
+	    
+	    try {
+	        // 
+	        testDA.open();
+	        testDA.createDriver(driverUsername, null);  
+	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        testDA.close();
+	        
+	        // Llamar al método 
+	        sut.open();
+	        List<Ride> result = sut.getRidesByDriver(UsernameUser);
+	        sut.close();
+	        
+	        // Verificar es null por exepcion 
+	        assertNull(result);
+	       
+	       
+	    } finally {
+	        testDA.open();
+	        testDA.removeDriver(driverUsername); 
+	        testDA.close();
+	    }
+	}
+	
+	public void test8() {
+	    String driverUsername = "Driver1";
+	    String drivernonExist = "driver00";
+	    
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(2024, Calendar.MAY, 20);
+	    Date rideDate = cal.getTime();
+	    
+	    try {
+	        // 
+	        testDA.open();
+	        testDA.createDriver(driverUsername, null);  
+	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        testDA.close();
+	        
+	        // Llamar al método 
+	        sut.open();
+	        List<Ride> result = sut.getRidesByDriver(drivernonExist);
+	        sut.close();
+	        
+	        // Verificar es null por exepcion 
+	        assertNull(result);
+	       
+	       
+	    } finally {
+	        testDA.open();
+	        testDA.removeDriver(driverUsername); 
+	        testDA.close();
+	    }
+	}
+	
+	
+	
 }

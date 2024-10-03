@@ -3,9 +3,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -263,6 +261,30 @@ public class GetRidesByDriverBDBlackTestMock {
 		
 		@Test
 		public void test8() {
+			Calendar cal = Calendar.getInstance();
+			cal.set(2024, Calendar.MAY, 20);
+			Date date1 = UtilDate.trim(cal.getTime());
+			
+			Driver driver1 = new Driver("Driver1", "123");
+			driver1.addRide("Bilbao", "Donosti", date1, 2, 7);
+			driver1.addRide("Donosti", "Bilbao", date1, 2, 7);
+			
+		    String nonExistentDriver = "driver00";
+		    
+		    // Mockear la interacción con la base de datos
+		    Mockito.when(db.createQuery(Mockito.anyString(), Mockito.eq(Driver.class))).thenReturn(typedQuery);
+		    Mockito.when(typedQuery.setParameter(Mockito.eq("username"), Mockito.eq(nonExistentDriver))).thenReturn(typedQuery);
+		    Mockito.when(typedQuery.getSingleResult()).thenThrow(new NoResultException("No driver found for username: " + nonExistentDriver));
+		    
+		    // Llamar al método con un username que no existe
+		    List<Ride> result = sut.getRidesByDriver(nonExistentDriver);
+		    
+		    // Verificar que el resultado es null debido a la excepción capturada en el catch
+		    assertNull(result);
+		}
+		
+		@Test
+		public void test9() {
 			Calendar cal = Calendar.getInstance();
 			cal.set(2024, Calendar.MAY, 20);
 			Date date1 = UtilDate.trim(cal.getTime());

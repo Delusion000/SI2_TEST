@@ -2,7 +2,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -147,9 +146,9 @@ public class GetRidesByDriverBDWhiteTestMock {
 
 		    // Verificar que el resultado es null debido a la excepción capturada en el catch
 		    assertNull(resultNull);
-
-		    // Resetear mocks para el siguiente caso
-		    Mockito.reset(typedQuery);
+		}
+		
+		public void test6() {
 
 		    // Caso: username es vacío
 		    Mockito.when(db.createQuery(Mockito.anyString(), Mockito.eq(Driver.class))).thenReturn(typedQuery);
