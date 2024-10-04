@@ -271,6 +271,7 @@ public class GetRidesByDriverBDBlackTest {
 	    }
 	}
 	
+	@Test
 	public void test8() {
 	    String driverUsername = "Driver1";
 	    String drivernonExist = "driver00";
@@ -304,6 +305,42 @@ public class GetRidesByDriverBDBlackTest {
 	    }
 	}
 	
-	
+	@Test
+	public void test9() {
+	    String driverUsername = "Driver1";
+	    
+	    Calendar cal = Calendar.getInstance();
+	    cal.set(2024, Calendar.MAY, 20);
+	    Date rideDate = cal.getTime();
+	    
+	    try {
+	        // 
+	        testDA.open();
+	        testDA.createDriver(driverUsername, null);  
+	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        testDA.addDriverWithRide(driverUsername, null, null, rideDate, 0, 0);
+	        testDA.close();
+	        
+	        // Llamar al método 
+	        sut.open();
+	        List<Ride> result = sut.getRidesByDriver(driverUsername);
+	        sut.close();
+	        
+	         
+	     // Verificar que no es null
+	        assertNotNull(result);
+	        
+	        // Verificar que el resultado 
+	        assertEquals(3, result.size());
+	       
+	       
+	    } finally {
+	        testDA.open();
+	        testDA.removeDriver(driverUsername); 
+	        testDA.close();
+	    }
+	}
 	
 }

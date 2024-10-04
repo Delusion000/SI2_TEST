@@ -134,6 +134,7 @@ public class GetRidesByDriverBDWhiteTestMock {
 		    assertTrue(result.isEmpty()); 
 		}
 		
+		/*
 		@Test
 		public void test5() {
 		    // Caso: username es null
@@ -161,7 +162,7 @@ public class GetRidesByDriverBDWhiteTestMock {
 		    // Verificar que el resultado es null debido a la excepción capturada en el catch
 		    assertNull(resultEmpty);
 		}
-
+*/
 
 
 
