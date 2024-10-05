@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.TimeZone;
 
 public class UtilDate {
-
+	
+	private UtilDate() {
+        throw new UnsupportedOperationException("This is a utility class and cannot be instantiated");
+    }
 	
 	public static Date trim(Date date) {
 

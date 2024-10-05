@@ -1,6 +1,8 @@
 package configuration;
 
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,6 +16,8 @@ import org.w3c.dom.NodeList;
  * It provides the configuration data from the "resources/config.xml" XML file
  */
 public class ConfigXML {
+	
+	private static final Logger logger = Logger.getLogger(ConfigXML.class.getName());
 	
 	private String configFile = "src/main/resources/config.xml";
 		
@@ -119,10 +123,8 @@ public class ConfigXML {
 				
 			  password=getTagValue("password", config);
 
-			  System.out.print("Read from config.xml: ");
-			  System.out.print("\t businessLogicLocal="+businessLogicLocal);
-			  System.out.print("\t databaseLocal="+databaseLocal);
-			  System.out.println("\t dataBaseInitialized="+isDatabaseInitialized); 
+			  logger.log(Level.INFO, "Read from config.xml: businessLogicLocal={0}\t databaseLocal={1}\t dataBaseInitialized={2}",
+		                new Object[]{businessLogicLocal, databaseLocal, isDatabaseInitialized}); 
 					  
 		  } catch (Exception e) {
 			System.out.println("Error in ConfigXML.java: problems with "+ configFile);
@@ -134,7 +136,7 @@ public class ConfigXML {
 	private static String getTagValue(String sTag, Element eElement)
 	 {
 		  NodeList nlList= eElement.getElementsByTagName(sTag).item(0).getChildNodes();
-		  Node nValue = (Node) nlList.item(0);
+		  Node nValue = nlList.item(0);
 
 		  return nValue.getNodeValue();
 

@@ -121,12 +121,13 @@ public class DataAccess {
 			Booking book4 = new Booking(ride3, traveler1, 1);
 			Booking book3 = new Booking(ride2, traveler2, 2);
 			Booking book5 = new Booking(ride5, traveler1, 1);
-
-			book1.setStatus("Accepted");
+			
+			
+			book1.setStatus(statusAccepted);
 			book2.setStatus("Rejected");
-			book3.setStatus("Accepted");
-			book4.setStatus("Accepted");
-			book5.setStatus("Accepted");
+			book3.setStatus(statusAccepted);
+			book4.setStatus(statusAccepted);
+			book5.setStatus(statusAccepted);
 
 			db.persist(book1);
 			db.persist(book2);
@@ -193,7 +194,9 @@ public class DataAccess {
 		return cities;
 
 	}
-
+	
+	private static final String statusAccepted = "Accepted";
+	
 	/**
 	 * This method returns all the arrival destinations, from all rides that depart
 	 * from a given city
@@ -205,8 +208,7 @@ public class DataAccess {
 		TypedQuery<String> query = db.createQuery("SELECT DISTINCT r.to FROM Ride r WHERE r.from=?1 ORDER BY r.to",
 				String.class);
 		query.setParameter(1, from);
-		List<String> arrivingCities = query.getResultList();
-		return arrivingCities;
+		return query.getResultList();
 
 	}
 
@@ -652,7 +654,7 @@ public class DataAccess {
 			db.getTransaction().begin();
 
 			for (Booking booking : ride.getBookings()) {
-				if (booking.getStatus().equals("Accepted") || booking.getStatus().equals("NotDefined")) {
+				if (booking.getStatus().equals(statusAccepted) || booking.getStatus().equals("NotDefined")) {
 					double price = booking.prezioaKalkulatu();
 					Traveler traveler = booking.getTraveler();
 					double frozenMoney = traveler.getIzoztatutakoDirua();
