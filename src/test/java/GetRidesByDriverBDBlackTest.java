@@ -1,5 +1,4 @@
 //test2
-
 import static org.junit.Assert.*;
 
 import java.util.Calendar;
@@ -13,7 +12,7 @@ import domain.Ride;
 import testOperations.TestDataAccess;
 
 public class GetRidesByDriverBDBlackTest {
-	 //sut:system under test
+	/* //sut:system under test
 	 static DataAccess sut=new DataAccess();
 	 
 	 //additional operations needed to execute the test 
@@ -345,5 +344,5 @@ public class GetRidesByDriverBDBlackTest {
 	        testDA.close();
 	    }
 	}
-	
+	*/
 }

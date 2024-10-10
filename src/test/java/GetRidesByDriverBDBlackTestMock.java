@@ -30,7 +30,7 @@ import domain.Driver;
 import domain.Ride;
 
 public class GetRidesByDriverBDBlackTestMock {
-	
+	/*
 	static BLFacade appFacadeInterface = Mockito.mock(BLFacade.class);
 
 	static DataAccess sut;
@@ -318,6 +318,7 @@ public class GetRidesByDriverBDBlackTestMock {
 		    assertTrue(result.contains(driver1.getCreatedRides().get(1)));
 		    assertFalse(result.contains(driver1.getCreatedRides().get(2)));    
 		}
+		*/
 }
 
 

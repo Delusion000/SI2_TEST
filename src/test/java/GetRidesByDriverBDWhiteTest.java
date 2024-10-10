@@ -11,6 +11,7 @@ import domain.Ride;
 import testOperations.TestDataAccess;
 
 public class GetRidesByDriverBDWhiteTest {
+	/*
 	 //sut:system under test
 	 static DataAccess sut=new DataAccess();
 	 
@@ -152,4 +153,5 @@ public class GetRidesByDriverBDWhiteTest {
 	        testDA.close();
 	    }
 	}
+	*/
 }

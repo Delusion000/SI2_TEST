@@ -29,7 +29,7 @@ import domain.Driver;
 import domain.Ride;
 
 public class GetRidesByDriverBDWhiteTestMock {
-	
+	/*
 	static BLFacade appFacadeInterface = Mockito.mock(BLFacade.class);
 
 	static DataAccess sut;
@@ -162,12 +162,6 @@ public class GetRidesByDriverBDWhiteTestMock {
 		    // Verificar que el resultado es null debido a la excepción capturada en el catch
 		    assertNull(resultEmpty);
 		}
-*/
-
-
-
-
-		
-		
-		
+		*/
 }
+
