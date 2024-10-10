@@ -321,6 +321,8 @@ public class GetRidesByDriverBDBlackTest {
 	        testDA.addDriverWithRide(driverUsername, "Cali", "Bogota", rideDate, 2, 10);
 	        testDA.addDriverWithRide(driverUsername, "Donosti", "Bilbao", rideDate, 2, 10);
 	        testDA.addDriverWithRide(driverUsername, "Bilbao", "Donosti", rideDate, 2, 10);
+	        
+	        //viaje null
 	        testDA.addDriverWithRide(driverUsername, null, null, rideDate, 0, 0);
 	        testDA.close();
 	        
