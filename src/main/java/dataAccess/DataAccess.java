@@ -24,13 +24,18 @@ import exceptions.RideMustBeLaterThanTodayException;
  * It implements the data access to the objectDb database
  */
 public class DataAccess {
+	
 	private EntityManager db;
 	private EntityManagerFactory emf;
 
 	ConfigXML c = ConfigXML.getInstance();
 	
 	private String adminPass="admin";
+    
+	private static final String statusAccepted = "Accepted";
 
+	private static final String BOOK_FREEZE = "BookFreeze";
+	
 	public DataAccess() {
 		if (c.isDatabaseInitialized()) {
 			String fileName = c.getDbFilename();
@@ -54,7 +59,7 @@ public class DataAccess {
 				+ c.isDatabaseInitialized());
 
 		close();
-
+     
 	}
 	//This constructor is used to mock the DB
 	public DataAccess(EntityManager db) {
@@ -135,11 +140,11 @@ public class DataAccess {
 			db.persist(book4);
 			db.persist(book5);
 
-			Movement m1 = new Movement(traveler1, "BookFreeze", 20);
-			Movement m2 = new Movement(traveler1, "BookFreeze", 40);
-			Movement m3 = new Movement(traveler1, "BookFreeze", 5);
-			Movement m4 = new Movement(traveler2, "BookFreeze", 4);
-			Movement m5 = new Movement(traveler1, "BookFreeze", 3);
+			Movement m1 = new Movement(traveler1, BOOK_FREEZE, 20);
+			Movement m2 = new Movement(traveler1, BOOK_FREEZE, 40);
+			Movement m3 = new Movement(traveler1, BOOK_FREEZE, 5);
+			Movement m4 = new Movement(traveler2, BOOK_FREEZE, 4);
+			Movement m5 = new Movement(traveler1, BOOK_FREEZE, 3);
 			Movement m6 = new Movement(driver1, "Deposit", 15);
 			Movement m7 = new Movement(traveler1, "Deposit", 168);
 			
@@ -195,7 +200,6 @@ public class DataAccess {
 
 	}
 	
-	private static final String statusAccepted = "Accepted";
 	
 	/**
 	 * This method returns all the arrival destinations, from all rides that depart
@@ -736,21 +740,22 @@ public class DataAccess {
 		return era;
 	}
 
-	public boolean erreklamazioaBidali(String nor, String nori, Date gaur, Booking booking, String textua,
-			boolean aurk) {
-		try {
-			db.getTransaction().begin();
+	public boolean erreklamazioaBidali(ComplaintData data, Booking booking) {
+	    try {
+	        db.getTransaction().begin();
 
-			Complaint erreklamazioa = new Complaint(nor, nori, gaur, booking, textua, aurk);
-			db.persist(erreklamazioa);
-			db.getTransaction().commit();
-			return true;
-		} catch (Exception e) {
-			e.printStackTrace();
-			db.getTransaction().rollback();
-			return false;
-		}
+	        Complaint erreklamazioa = new Complaint(data.getNor(), data.getNori(), 
+	        		data.getGaur(), booking, data.getTextua(), data.isAurk());
+	        db.persist(erreklamazioa);
+	        db.getTransaction().commit();
+	        return true;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        db.getTransaction().rollback();
+	        return false;
+	    }
 	}
+
 
 	public void updateComplaint(Complaint erreklamazioa) {
 		try {
@@ -949,46 +954,61 @@ public class DataAccess {
 	}
 
 	public boolean updateAlertaAurkituak(String username) {
-		try {
-			db.getTransaction().begin();
+	    try {
+	        db.getTransaction().begin();
 
-			boolean alertFound = false;
-			TypedQuery<Alert> alertQuery = db.createQuery("SELECT a FROM Alert a WHERE a.traveler.username = :username",
-					Alert.class);
-			alertQuery.setParameter("username", username);
-			List<Alert> alerts = alertQuery.getResultList();
+	        List<Alert> alerts = getAlertsByUsername1(username);
+	        List<Ride> rides = getActiveRides();
 
-			TypedQuery<Ride> rideQuery = db
-					.createQuery("SELECT r FROM Ride r WHERE r.date > CURRENT_DATE AND r.active = true", Ride.class);
-			List<Ride> rides = rideQuery.getResultList();
+	        boolean alertFound = processAlerts(alerts, rides);
 
-			for (Alert alert : alerts) {
-				boolean found = false;
-				for (Ride ride : rides) {
-					if (UtilDate.datesAreEqualIgnoringTime(ride.getDate(), alert.getDate())
-							&& ride.getFrom().equals(alert.getFrom()) && ride.getTo().equals(alert.getTo())
-							&& ride.getnPlaces() > 0) {
-						alert.setFound(true);
-						found = true;
-						if (alert.isActive())
-							alertFound = true;
-						break;
-					}
-				}
-				if (!found) {
-					alert.setFound(false);
-				}
-				db.merge(alert);
-			}
-
-			db.getTransaction().commit();
-			return alertFound;
-		} catch (Exception e) {
-			e.printStackTrace();
-			db.getTransaction().rollback();
-			return false;
-		}
+	        db.getTransaction().commit();
+	        return alertFound;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        db.getTransaction().rollback();
+	        return false;
+	    }
 	}
+
+	// Método para obtener las alertas de un usuario
+	private List<Alert> getAlertsByUsername1(String username) {
+	    TypedQuery<Alert> alertQuery = db.createQuery(
+	    		"SELECT a FROM Alert a WHERE a.traveler.username = :username", Alert.class);
+	    alertQuery.setParameter("username", username);
+	    return alertQuery.getResultList();
+	}
+
+	// Método para obtener los viajes activos
+	private List<Ride> getActiveRides() {
+	    TypedQuery<Ride> rideQuery = db.createQuery(
+	    		"SELECT r FROM Ride r WHERE r.date > CURRENT_DATE AND r.active = true", Ride.class);
+	    return rideQuery.getResultList();
+	}
+
+	// Método que procesa las alertas y las compara con los viajes
+	private boolean processAlerts(List<Alert> alerts, List<Ride> rides) {
+	    boolean alertFound = false;
+	    for (Alert alert : alerts) {
+	        boolean found = rides.stream().anyMatch(ride -> isMatchingRide(ride, alert));
+
+	        alert.setFound(found);
+	        if (found && alert.isActive()) {
+	            alertFound = true;
+	        }
+	        db.merge(alert);
+	    }
+	    return alertFound;
+	}
+
+	// Método auxiliar que compara un viaje con una alerta
+	private boolean isMatchingRide(Ride ride, Alert alert) {
+	    return UtilDate.datesAreEqualIgnoringTime(ride.getDate(), alert.getDate()) &&
+	            ride.getFrom().equals(alert.getFrom()) &&
+	            ride.getTo().equals(alert.getTo()) &&
+	            ride.getnPlaces() > 0;
+	}
+
 
 	public boolean createAlert(Alert alert) {
 		try {
