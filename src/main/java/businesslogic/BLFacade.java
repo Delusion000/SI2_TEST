@@ -41,6 +41,9 @@ public interface BLFacade {
 	 * @param from the depart location of a ride
 	 * @return all the arrival destinations
 	 */
+	
+	public ExtendedIterator<String> getDepartCitiesIterator();
+	
 	@WebMethod
 	public List<String> getDestinationCities(String from);
 

@@ -26,7 +26,7 @@ import exceptions.RideAlreadyExistException;
  * It implements the business logic as a web service.
  */
 @WebService(endpointInterface = "businessLogic.BLFacade")
-public class BLFacadeImplementation implements BLFacade {
+public class BLFacadeImplementation implements BLFacade{
 	DataAccess dbManager;
 
 	public BLFacadeImplementation() {
@@ -59,7 +59,17 @@ public class BLFacadeImplementation implements BLFacade {
 		dbManager.close();
 
 		return departLocations;
-
+	}
+	
+	
+	public ExtendedIterator<String> getDepartCitiesIterator(){
+		dbManager.open();
+	    
+	    List<String> departLocations = dbManager.getDepartCities();
+	    
+	    dbManager.close();
+	    
+	    return new AdapterExtendedIterator<>(departLocations);
 	}
 
 	/**
@@ -460,5 +470,9 @@ public class BLFacadeImplementation implements BLFacade {
 		dbManager.close();
 		return er;
 	}
+
+	
+
+	
 
 }
